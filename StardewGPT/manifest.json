@@ -1,0 +1,10 @@
+{
+    "Name": "StardewGPT",
+    "Author": "Henri Schulte",
+    "Version": "0.0.1",
+    "Description": "Immersive, AI-generated conversations with Stardew Valley NPCs.",
+    "UniqueID": "HenriSchulte.StardewGPT",
+    "EntryDll": "StardewGPT.dll",
+    "MinimumApiVersion": "3.0.0",
+    "UpdateKeys": []
+  }
