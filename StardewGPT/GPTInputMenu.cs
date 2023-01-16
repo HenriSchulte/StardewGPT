@@ -42,6 +42,11 @@ namespace StardewGPT
 			this.onSubmit(sender.Text);
 		}
 
+		public override void receiveKeyPress(Keys key)
+		{
+			// Leave empty to prevent typing from opening menus
+		}
+
 		public override void draw(SpriteBatch b)
 		{
 			base.draw(b);

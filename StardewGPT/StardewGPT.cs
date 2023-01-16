@@ -13,7 +13,6 @@ using StardewValley.Menus;
 // - Add submit button
 // - The whole AI bit
 // - Fix menu size and position
-// - Fix letters being recognized as commands (e.g. E for inventory)
 
 
 namespace StardewGPT
