@@ -20,10 +20,12 @@ namespace StardewGPT
             caretVisible = !(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 1000.0 < 500.0);
             if (caretVisible && base.Selected)
             {
-                spriteBatch.Draw(Game1.staminaRect, new Rectangle(base.X + 16 + (int)this.Width - 2, base.Y + 8, 4, 32), base._textColor);
+                int textHeight = SpriteText.getHeightOfString(base.Text);
+                int textWidth = SpriteText.getWidthOfString(base.Text.Split('^')[^1]); // get width of the last line only
+                spriteBatch.Draw(Game1.staminaRect, new Rectangle(base.X + 16 + textWidth + 2, base.Y + textHeight - 30, 4, 32), base._textColor);
             }
             // spriteBatch.DrawString(base._font, $"Alex: Hello, World!\n{Game1.player.Name}: ", new Vector2((float)base.X + 12f), base._textColor);
-            SpriteText.drawString(spriteBatch, $"Alex: Hello, World!^{Game1.player.Name}: {base.Text}", base.X + 8, base.Y + 12);
+            SpriteText.drawString(spriteBatch, base.Text, base.X + 8, base.Y + 12);
         }
     }
 }

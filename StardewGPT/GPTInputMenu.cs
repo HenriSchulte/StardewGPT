@@ -34,6 +34,7 @@ namespace StardewGPT
 			this.textBox.Width = 1200;
 			this.textBox.Height = 600;
 			this.textBox.OnEnterPressed += textBoxEnter;
+            this.textBox.Text = $"Alex: Hello, World!^{Game1.player.Name}: ";
 			this.textBox.SelectMe();
 		}
 
