@@ -10,9 +10,10 @@ using StardewValley.Menus;
 // TODO:
 // - Fix caret
 // - Add line breaks
-// - Submit text on enter
 // - Add submit button
 // - The whole AI bit
+// - Fix menu size and position
+// - Fix letters being recognized as commands (e.g. E for inventory)
 
 
 namespace StardewGPT
@@ -38,7 +39,7 @@ namespace StardewGPT
                 // Game1.activateClickableMenu = new PlayerInputDialogue();
                 Game1.activeClickableMenu = new DialogueBox("This is a test.^Oh well...^");
             else if (e.Button == SButton.F11)
-                Game1.activeClickableMenu = new GPTInputMenu();
+                Game1.activeClickableMenu = new GPTInputMenu(log);
             else if (e.Button == SButton.F9)
             {
                 Dialogue d = new Dialogue("Hello, World!$h#$b", Game1.getCharacterFromName("Alex"));
@@ -49,6 +50,7 @@ namespace StardewGPT
         private void log(string message)
         {
             this.Monitor.Log(message, LogLevel.Debug);
+            Game1.exitActiveMenu();
         }
     }
 }

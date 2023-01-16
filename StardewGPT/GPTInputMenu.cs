@@ -5,11 +5,15 @@ using Microsoft.Xna.Framework.Input;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
 using StardewValley;
+using StardewModdingAPI;
 
 namespace StardewGPT
 {
 	public class GPTInputMenu : IClickableMenu
 	{
+		public delegate void submitBehavior(string s);
+	
+		private submitBehavior onSubmit;
 
 		private int x;
 
@@ -17,8 +21,9 @@ namespace StardewGPT
 
 		private TextBox textBox;
 
-		public GPTInputMenu()
+		public GPTInputMenu(submitBehavior callback)
 		{
+			this.onSubmit = callback;
 			this.x = Game1.uiViewport.Width / 2 - 600;
 			this.y = Game1.uiViewport.Height / 2;
 			base.width = 1200;
@@ -28,7 +33,13 @@ namespace StardewGPT
 			this.textBox.Y = Game1.uiViewport.Height / 2;
 			this.textBox.Width = 1200;
 			this.textBox.Height = 600;
+			this.textBox.OnEnterPressed += textBoxEnter;
 			this.textBox.SelectMe();
+		}
+
+		public void textBoxEnter(TextBox sender)
+		{
+			this.onSubmit(sender.Text);
 		}
 
 		public override void draw(SpriteBatch b)
