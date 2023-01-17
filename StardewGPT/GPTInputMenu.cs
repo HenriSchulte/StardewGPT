@@ -28,12 +28,13 @@ namespace StardewGPT
 			this.y = Game1.uiViewport.Height / 2;
 			base.width = 1200;
 			base.height = 600;
-			this.textBox = new GPTTextBox(null, null, Game1.dialogueFont, Game1.textColor, $"Alex: Hello, World!^{Game1.player.Name}: ");
+			this.textBox = new GPTTextBox(null, null, Game1.dialogueFont, Game1.textColor);
 			this.textBox.X = Game1.uiViewport.Width / 2 - 600;
 			this.textBox.Y = Game1.uiViewport.Height / 2;
 			this.textBox.Width = 1200;
 			this.textBox.Height = 600;
 			this.textBox.OnEnterPressed += textBoxEnter;
+			this.textBox.Text = $"Alex: Hello, World!^{Game1.player.Name}: ";
 			this.textBox.SelectMe();
 		}
 

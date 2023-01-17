@@ -10,53 +10,38 @@ namespace StardewGPT
 {
     public class GPTTextBox : TextBox
     {
-        public new string Text
-        {
-            get
-            {
-                return this._text;
-            }
-            set
-            {
-                this._text = value;
-                if (this._text == null)
-                {
-                    this._text = "";
-                }
-                if (!(this._text != ""))
-                {
-                    return;
-                }
-                if (this.limitWidth && GPTSpriteText.getLastLineWidth(this._text) > (this.Width - 21))
-                {
-                    this.Text = GPTSpriteText.breakLastLine(this._text);
-                }
-            }
-        }
-
-        private string _text;
-
-        public GPTTextBox(Texture2D textBoxTexture, Texture2D caretTexture, SpriteFont font, Color textColor, string text = "")
+        public GPTTextBox(Texture2D textBoxTexture, Texture2D caretTexture, SpriteFont font, Color textColor)
 		: base(textBoxTexture, caretTexture, font, textColor)
         {
-            this._text = text;
+            base.limitWidth = false;
         }
 
         public override void RecieveTextInput(char inputChar)
         {
-            this.Text += inputChar;
+            string combined = base.Text + inputChar;
+            if (GPTSpriteText.getLastLineWidth(combined) > (base.Width - 21))
+            {
+                base.Text = GPTSpriteText.breakLastLine(combined);
+            }
+            else
+            {
+                base.Text = combined;
+            }
         }
 
         public override void RecieveTextInput(string text)
         {
-            this.Text += text;
+            foreach (char c in text)
+            {
+                RecieveTextInput(c);
+            }
         }
 
         public override void RecieveCommandInput(char command)
         {
-            if (command == '\b' && this._text.Length > 0)
+            if (command == '\b' && base.Text.Length > 0)
             {
-                this.Text = this._text.Remove(this._text.Length - 1);
+                base.Text = base.Text.Remove(base.Text.Length - 1);
             }
             else
             {
@@ -69,12 +54,11 @@ namespace StardewGPT
             caretVisible = !(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 1000.0 < 500.0);
             if (caretVisible && base.Selected)
             {
-                int textHeight = SpriteText.getHeightOfString(this.Text);
-                int textWidth = GPTSpriteText.getLastLineWidth(this.Text);
+                int textHeight = SpriteText.getHeightOfString(base.Text);
+                int textWidth = GPTSpriteText.getLastLineWidth(base.Text);
                 spriteBatch.Draw(Game1.staminaRect, new Rectangle(base.X + 16 + textWidth + 2, base.Y + textHeight - 30, 4, 32), base._textColor);
             }
-            // spriteBatch.DrawString(base._font, $"Alex: Hello, World!\n{Game1.player.Name}: ", new Vector2((float)base.X + 12f), base._textColor);
-            SpriteText.drawString(spriteBatch, this.Text, base.X + 8, base.Y + 12);
+            SpriteText.drawString(spriteBatch, base.Text, base.X + 8, base.Y + 12);
         }
     }
 }
