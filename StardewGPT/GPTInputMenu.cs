@@ -21,6 +21,10 @@ namespace StardewGPT
 
 		private TextBox textBox;
 
+		public const int region_submitButton = 102;
+
+		public ClickableTextureComponent submitButton;
+
 		public GPTInputMenu(submitBehavior callback)
 		{
 			this.onSubmit = callback;
@@ -36,6 +40,10 @@ namespace StardewGPT
 			this.textBox.OnEnterPressed += textBoxEnter;
 			this.textBox.Text = $"Alex: Hello, World!^{Game1.player.Name}: ";
 			this.textBox.SelectMe();
+			this.submitButton = new ClickableTextureComponent(new Rectangle(this.textBox.X + this.textBox.Width + 32 + 4, Game1.uiViewport.Height / 2 - 8, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
+			{
+				myID = 102
+			};
 		}
 
 		public void textBoxEnter(TextBox sender)
@@ -48,12 +56,39 @@ namespace StardewGPT
 			// Leave empty to prevent typing from opening menus
 		}
 
+		public override void receiveLeftClick(int x, int y, bool playSound = true)
+		{
+			base.receiveLeftClick(x, y, playSound);
+			this.textBox.Update();
+			if (this.submitButton.containsPoint(x, y))
+			{
+				this.textBoxEnter(this.textBox);
+				Game1.playSound("smallSelect");
+			}
+		}
+
+		public override void performHoverAction(int x, int y)
+		{
+			base.performHoverAction(x, y);
+			if (this.submitButton != null)
+			{
+				if (this.submitButton.containsPoint(x, y))
+				{
+					this.submitButton.scale = Math.Min(1.1f, this.submitButton.scale + 0.05f);
+				}
+				else
+				{
+					this.submitButton.scale = Math.Max(1f, this.submitButton.scale - 0.05f);
+				}
+			}
+		}
+
 		public override void draw(SpriteBatch b)
 		{
 			base.draw(b);
 			this.drawBox(b, this.x, this.y, this.width, this.height);
 			this.textBox.Draw(b);
-			// SpriteText.drawString(b, $"Alex: Hello, World!\n{Game1.player.Name}: ", this.x + 8, this.y + 8);
+			this.submitButton.draw(b);
 			base.drawMouse(b);
 		}
 
