@@ -8,10 +8,7 @@ using StardewValley.Menus;
 
 
 // TODO:
-// - Add submit button
 // - The whole AI bit
-// - Fix menu size and position
-
 
 namespace StardewGPT
 {

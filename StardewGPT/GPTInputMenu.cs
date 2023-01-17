@@ -29,18 +29,18 @@ namespace StardewGPT
 		{
 			this.onSubmit = callback;
 			this.x = Game1.uiViewport.Width / 2 - 600;
-			this.y = Game1.uiViewport.Height / 2;
+			this.y = Game1.uiViewport.Height / 2 + 92;
 			base.width = 1200;
-			base.height = 600;
+			base.height = 384;
 			this.textBox = new GPTTextBox(null, null, Game1.dialogueFont, Game1.textColor);
-			this.textBox.X = Game1.uiViewport.Width / 2 - 600;
-			this.textBox.Y = Game1.uiViewport.Height / 2;
-			this.textBox.Width = 1200;
-			this.textBox.Height = 600;
+			this.textBox.X = x;
+			this.textBox.Y = y;
+			this.textBox.Width = width;
+			this.textBox.Height = height;
 			this.textBox.OnEnterPressed += textBoxEnter;
 			this.textBox.Text = $"Alex: Hello, World!^{Game1.player.Name}: ";
 			this.textBox.SelectMe();
-			this.submitButton = new ClickableTextureComponent(new Rectangle(this.textBox.X + this.textBox.Width + 32 + 4, Game1.uiViewport.Height / 2 - 8, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
+			this.submitButton = new ClickableTextureComponent(new Rectangle(x + width - 64 - 4, y + height - 64 - 4, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
 			{
 				myID = 102
 			};
