@@ -8,7 +8,6 @@ using StardewValley.Menus;
 
 
 // TODO:
-// - Add line breaks
 // - Add submit button
 // - The whole AI bit
 // - Fix menu size and position
