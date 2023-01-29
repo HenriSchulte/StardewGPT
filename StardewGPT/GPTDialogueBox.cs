@@ -9,8 +9,26 @@ namespace StardewGPT
 {
 	public class GPTDialogueBox : DialogueBox
 	{
-		public GPTDialogueBox(Dialogue dialogue) : base(dialogue)
+		public delegate void closeBehavior();
+	
+		private closeBehavior onClose;
+
+
+		public GPTDialogueBox(Dialogue dialogue, closeBehavior callback) : base(dialogue)
 		{
+			this.onClose = callback;
+		}
+
+		public override void receiveLeftClick(int x, int y, bool playSound = true)
+		{
+			if (base.characterDialogue.isOnFinalDialogue())
+			{
+				this.onClose();
+			}
+			else
+			{
+				base.receiveLeftClick(x, y, playSound);
+			}
 		}
 	}
 }

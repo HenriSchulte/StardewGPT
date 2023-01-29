@@ -14,6 +14,9 @@ namespace StardewGPT
 {
     internal sealed class ModEntry : Mod
     {
+
+        private Dialogue dialogue;
+
         public override void Entry(IModHelper helper)
         {
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
@@ -25,26 +28,34 @@ namespace StardewGPT
             if (!Context.IsWorldReady)
                 return;
 
+            if (Game1.activeClickableMenu != null || (!Context.IsPlayerFree)) return;
+
             // print button presses to the console window
             this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
 
             // Display our UI if user presses F10
             if (e.Button == SButton.F10)
-                // Game1.activateClickableMenu = new PlayerInputDialogue();
-                Game1.activeClickableMenu = new DialogueBox("This is a test.^Oh well...^");
-            else if (e.Button == SButton.F11)
-                Game1.activeClickableMenu = new GPTInputMenu(log);
-            else if (e.Button == SButton.F9)
             {
-                Dialogue d = new Dialogue("Hello, World!$h#$b", Game1.getCharacterFromName("Alex"));
-                Game1.activeClickableMenu = new GPTDialogueBox(d);
+                this.showDialogueMenu($"Hey, {Game1.player.Name}!$e", "Alex");
             }
         }
 
-        private void log(string message)
+        private void onInputSubmit(string text)
         {
-            this.Monitor.Log(message, LogLevel.Debug);
-            Game1.exitActiveMenu();
+            this.Monitor.Log(text, LogLevel.Debug);
+            // Game1.exitActiveMenu();
+            this.showDialogueMenu(text, "Alex");
+        }
+
+        private void showDialogueMenu(string text, string character)
+        {
+            dialogue = new Dialogue(text, Game1.getCharacterFromName(character));
+            Game1.activeClickableMenu = new GPTDialogueBox(dialogue, showInputMenu);
+        }
+
+        private void showInputMenu()
+        {
+            Game1.activeClickableMenu = new GPTInputMenu(onInputSubmit);
         }
     }
 }

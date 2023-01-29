@@ -38,7 +38,7 @@ namespace StardewGPT
 			this.textBox.Width = width;
 			this.textBox.Height = height;
 			this.textBox.OnEnterPressed += textBoxEnter;
-			this.textBox.Text = $"Alex: Hello, World!^{Game1.player.Name}: ";
+			this.textBox.Text = $"{Game1.player.Name}: ";
 			this.textBox.SelectMe();
 			this.submitButton = new ClickableTextureComponent(new Rectangle(x + width - 64 - 4, y + height - 64 - 4, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
 			{
