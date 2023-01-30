@@ -53,7 +53,8 @@ namespace StardewGPT
                 model = GptApi.model,
                 prompt = prompt, 
                 temperature = GptApi.temperature,
-                max_tokens = GptApi.max_tokens
+                max_tokens = GptApi.max_tokens,
+                stop = "\n"
             };
             
             string requestDataJson = JsonSerializer.Serialize(requestData);

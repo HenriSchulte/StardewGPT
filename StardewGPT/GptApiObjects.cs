@@ -34,5 +34,6 @@ namespace StardewGPT
         public string prompt { get; set; }
         public int temperature { get; set; }
         public int max_tokens { get; set; }
+        public string stop { get; set; }
     }
 }
