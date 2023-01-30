@@ -1,5 +1,7 @@
 using System;
+using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -14,6 +16,8 @@ namespace StardewGPT
     {
 
         public Dialogue Dialogue;
+
+        public StringBuilder ConversationHistory = new StringBuilder();
 
         public GptApi Api = new GptApi();
 
@@ -36,17 +40,31 @@ namespace StardewGPT
             // Display our UI if user presses F10
             if (e.Button == SButton.F10)
             {
-                this.showDialogueMenu($"Hey, {Game1.player.Name}!$e", "Alex");
+                string greeting = $"Hey, {Game1.player.Name}!$e";
+                this.ConversationHistory.Append($"Alex: {greeting}"); // TODO: change to generic char
+                this.showDialogueMenu(greeting, "Alex");
             }
         }
 
         private async Task onInputSubmit(string text)
         {
             this.Monitor.Log(text, LogLevel.Debug);
+            this.ConversationHistory.Append(text);
             // Show empty dialogue box while fetching response
             this.showDialogueMenu("...", "Alex");
-            string response = await this.Api.GetCompletionAsync(text);
+            string prompt = this.ConstructPrompt(text, "Alex");
+            string response = await this.Api.GetCompletionAsync(prompt);
+            this.Monitor.Log(response, LogLevel.Debug);
+            this.ConversationHistory.Append(response);
             this.showDialogueMenu(response, "Alex");
+        }
+
+        private string ConstructPrompt(string text, string character)
+        {
+            string conversationHistory = this.ConversationHistory.ToString();
+            string prefix = $"A conversation between two characters in the video game Stardew Valley, the new farmer, Henri, and {character}.";
+            string prompt = $"{prefix}\n{conversationHistory}\n{character}: ";
+            return prompt;
         }
 
         private void showDialogueMenu(string text, string character)
