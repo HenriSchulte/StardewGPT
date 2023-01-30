@@ -43,19 +43,19 @@ namespace StardewGPT
         private void onInputSubmit(string text)
         {
             this.Monitor.Log(text, LogLevel.Debug);
-            // Game1.exitActiveMenu();
-            this.showDialogueMenu(text, "Alex");
+            // TODO: call AI and get response
+            this.showDialogueMenu(text, "Alex"); // this should not use text, but instead the AI response
         }
 
         private void showDialogueMenu(string text, string character)
         {
             dialogue = new Dialogue(text, Game1.getCharacterFromName(character));
-            Game1.activeClickableMenu = new GPTDialogueBox(dialogue, showInputMenu);
+            Game1.activeClickableMenu = new GptDialogueBox(dialogue, showInputMenu);
         }
 
         private void showInputMenu()
         {
-            Game1.activeClickableMenu = new GPTInputMenu(onInputSubmit);
+            Game1.activeClickableMenu = new GptInputMenu(onInputSubmit);
         }
     }
 }

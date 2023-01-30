@@ -7,14 +7,14 @@ using StardewValley;
 
 namespace StardewGPT
 {
-	public class GPTDialogueBox : DialogueBox
+	public class GptDialogueBox : DialogueBox
 	{
 		public delegate void closeBehavior();
 	
 		private closeBehavior onClose;
 
 
-		public GPTDialogueBox(Dialogue dialogue, closeBehavior callback) : base(dialogue)
+		public GptDialogueBox(Dialogue dialogue, closeBehavior callback) : base(dialogue)
 		{
 			this.onClose = callback;
 		}

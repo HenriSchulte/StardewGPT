@@ -8,7 +8,7 @@ using StardewValley;
 
 namespace StardewGPT
 {
-    public class GPTSpriteText
+    public class GptSpriteText
     {
         public static string getLastLine(string text)
         {

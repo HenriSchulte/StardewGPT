@@ -8,9 +8,9 @@ using StardewValley;
 
 namespace StardewGPT
 {
-    public class GPTTextBox : TextBox
+    public class GptTextBox : TextBox
     {
-        public GPTTextBox(Texture2D textBoxTexture, Texture2D caretTexture, SpriteFont font, Color textColor)
+        public GptTextBox(Texture2D textBoxTexture, Texture2D caretTexture, SpriteFont font, Color textColor)
 		: base(textBoxTexture, caretTexture, font, textColor)
         {
             base.limitWidth = false;
@@ -19,9 +19,9 @@ namespace StardewGPT
         public override void RecieveTextInput(char inputChar)
         {
             string combined = base.Text + inputChar;
-            if (GPTSpriteText.getLastLineWidth(combined) > (base.Width - 21))
+            if (GptSpriteText.getLastLineWidth(combined) > (base.Width - 21))
             {
-                base.Text = GPTSpriteText.breakLastLine(combined);
+                base.Text = GptSpriteText.breakLastLine(combined);
             }
             else
             {
@@ -55,7 +55,7 @@ namespace StardewGPT
             if (caretVisible && base.Selected)
             {
                 int textHeight = SpriteText.getHeightOfString(base.Text);
-                int textWidth = GPTSpriteText.getLastLineWidth(base.Text);
+                int textWidth = GptSpriteText.getLastLineWidth(base.Text);
                 spriteBatch.Draw(Game1.staminaRect, new Rectangle(base.X + 16 + textWidth + 2, base.Y + textHeight - 30, 4, 32), base._textColor);
             }
             SpriteText.drawString(spriteBatch, base.Text, base.X + 8, base.Y + 12);

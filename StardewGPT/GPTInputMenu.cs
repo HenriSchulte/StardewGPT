@@ -9,7 +9,7 @@ using StardewModdingAPI;
 
 namespace StardewGPT
 {
-	public class GPTInputMenu : IClickableMenu
+	public class GptInputMenu : IClickableMenu
 	{
 		public delegate void submitBehavior(string s);
 	
@@ -25,14 +25,14 @@ namespace StardewGPT
 
 		public ClickableTextureComponent submitButton;
 
-		public GPTInputMenu(submitBehavior callback)
+		public GptInputMenu(submitBehavior callback)
 		{
 			this.onSubmit = callback;
 			this.x = Game1.uiViewport.Width / 2 - 600;
 			this.y = Game1.uiViewport.Height / 2 + 92;
 			base.width = 1200;
 			base.height = 384;
-			this.textBox = new GPTTextBox(null, null, Game1.dialogueFont, Game1.textColor);
+			this.textBox = new GptTextBox(null, null, Game1.dialogueFont, Game1.textColor);
 			this.textBox.X = x;
 			this.textBox.Y = y;
 			this.textBox.Width = width;
