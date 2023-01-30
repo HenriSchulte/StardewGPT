@@ -41,7 +41,7 @@ namespace StardewGPT
             if (e.Button == SButton.F10)
             {
                 string greeting = $"Hey, {Game1.player.Name}!$e";
-                this.ConversationHistory.Append($"Alex: {greeting}"); // TODO: change to generic char
+                this.ConversationHistory.AppendLine($"Alex: {greeting}"); // TODO: change to generic char
                 this.showDialogueMenu(greeting, "Alex");
             }
         }
@@ -49,13 +49,14 @@ namespace StardewGPT
         private async Task onInputSubmit(string text)
         {
             this.Monitor.Log(text, LogLevel.Debug);
-            this.ConversationHistory.Append(text);
+            this.ConversationHistory.AppendLine(text);
             // Show empty dialogue box while fetching response
             this.showDialogueMenu("...", "Alex");
             string prompt = this.ConstructPrompt(text, "Alex");
             string response = await this.Api.GetCompletionAsync(prompt);
+            this.Monitor.Log(prompt, LogLevel.Debug);
             this.Monitor.Log(response, LogLevel.Debug);
-            this.ConversationHistory.Append(response);
+            this.ConversationHistory.AppendLine(response);
             this.showDialogueMenu(response, "Alex");
         }
 
