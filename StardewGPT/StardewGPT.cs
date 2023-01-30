@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -7,15 +8,14 @@ using StardewValley;
 using StardewValley.Menus;
 
 
-// TODO:
-// - The whole AI bit
-
 namespace StardewGPT
 {
     internal sealed class ModEntry : Mod
     {
 
-        private Dialogue dialogue;
+        public Dialogue Dialogue;
+
+        public GptApi Api = new GptApi();
 
         public override void Entry(IModHelper helper)
         {
@@ -40,17 +40,19 @@ namespace StardewGPT
             }
         }
 
-        private void onInputSubmit(string text)
+        private async Task onInputSubmit(string text)
         {
             this.Monitor.Log(text, LogLevel.Debug);
-            // TODO: call AI and get response
-            this.showDialogueMenu(text, "Alex"); // this should not use text, but instead the AI response
+            // Show empty dialogue box while fetching response
+            this.showDialogueMenu("...", "Alex");
+            string response = await this.Api.GetCompletionAsync(text);
+            this.showDialogueMenu(response, "Alex");
         }
 
         private void showDialogueMenu(string text, string character)
         {
-            dialogue = new Dialogue(text, Game1.getCharacterFromName(character));
-            Game1.activeClickableMenu = new GptDialogueBox(dialogue, showInputMenu);
+            this.Dialogue = new Dialogue(text, Game1.getCharacterFromName(character));
+            Game1.activeClickableMenu = new GptDialogueBox(this.Dialogue, showInputMenu);
         }
 
         private void showInputMenu()

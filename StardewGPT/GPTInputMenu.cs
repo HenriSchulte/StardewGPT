@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,7 +12,7 @@ namespace StardewGPT
 {
 	public class GptInputMenu : IClickableMenu
 	{
-		public delegate void submitBehavior(string s);
+		public delegate Task submitBehavior(string s);
 	
 		private submitBehavior onSubmit;
 
