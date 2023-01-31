@@ -42,7 +42,8 @@ namespace StardewGPT
             // Display our UI if user presses F10
             if (e.Button == SButton.F10)
             {
-                string greeting = $"Hey, {Game1.player.Name}!";
+                NPC npc = Game1.getCharacterFromName(this.CharacterName);
+                string greeting = npc.getHi(Game1.player.Name);
                 this.ConversationHistory.AppendLine($"{this.CharacterName}: {greeting}");
                 this.showDialogueMenu(greeting);
             }
