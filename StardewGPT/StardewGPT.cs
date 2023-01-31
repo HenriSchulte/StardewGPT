@@ -21,6 +21,8 @@ namespace StardewGPT
 
         public GptApi Api = new GptApi();
 
+        public string CharacterName = "Alex";
+
         public override void Entry(IModHelper helper)
         {
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
@@ -40,9 +42,9 @@ namespace StardewGPT
             // Display our UI if user presses F10
             if (e.Button == SButton.F10)
             {
-                string greeting = $"Hey, {Game1.player.Name}!$e";
-                this.ConversationHistory.AppendLine($"Alex: {greeting}"); // TODO: change to generic char
-                this.showDialogueMenu(greeting, "Alex");
+                string greeting = $"Hey, {Game1.player.Name}!";
+                this.ConversationHistory.AppendLine($"{this.CharacterName}: {greeting}");
+                this.showDialogueMenu(greeting);
             }
         }
 
@@ -51,26 +53,26 @@ namespace StardewGPT
             this.Monitor.Log(text, LogLevel.Debug);
             this.ConversationHistory.AppendLine(text);
             // Show empty dialogue box while fetching response
-            this.showDialogueMenu("...", "Alex");
-            string prompt = this.ConstructPrompt(text, "Alex");
-            string response = await this.Api.GetCompletionAsync(prompt);
+            this.showDialogueMenu("...");
+            string prompt = this.ConstructPrompt(text);
             this.Monitor.Log(prompt, LogLevel.Debug);
+            string response = await this.Api.GetCompletionAsync(prompt);
             this.Monitor.Log(response, LogLevel.Debug);
             this.ConversationHistory.AppendLine(response);
-            this.showDialogueMenu(response, "Alex");
+            this.showDialogueMenu(response);
         }
 
-        private string ConstructPrompt(string text, string character)
+        private string ConstructPrompt(string text)
         {
             string conversationHistory = this.ConversationHistory.ToString();
-            string prefix = $"A conversation between two characters in the video game Stardew Valley, the new farmer, Henri, and {character}.";
-            string prompt = $"{prefix}\n{conversationHistory}\n{character}: ";
+            string prefix = $"A conversation between two characters in the video game Stardew Valley, the new farmer, {Game1.player.Name}, and {this.CharacterName}.";
+            string prompt = $"{prefix}\n{conversationHistory}\n{this.CharacterName}: ";
             return prompt;
         }
 
-        private void showDialogueMenu(string text, string character)
+        private void showDialogueMenu(string text)
         {
-            this.Dialogue = new Dialogue(text, Game1.getCharacterFromName(character));
+            this.Dialogue = new Dialogue(text, Game1.getCharacterFromName(this.CharacterName));
             Game1.activeClickableMenu = new GptDialogueBox(this.Dialogue, showInputMenu);
         }
 
