@@ -37,15 +37,32 @@ namespace StardewGPT
             if (Game1.activeClickableMenu != null || (!Context.IsPlayerFree)) return;
 
             // print button presses to the console window
-            this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
+            // this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
 
-            // Display our UI if user presses F10
-            if (e.Button == SButton.F10)
+            // Display our UI if user presses middle mouse
+            if (e.Button == SButton.MouseMiddle )
             {
-                NPC npc = Game1.getCharacterFromName(this.CharacterName);
-                string greeting = npc.getHi(Game1.player.Name);
-                this.ConversationHistory.AppendLine($"{this.CharacterName}: {greeting}");
-                this.showDialogueMenu(greeting);
+                NPC dialogueTarget = null;
+                foreach (NPC npc in Game1.currentLocation.characters)
+                {
+                    this.Monitor.Log(npc.Name, LogLevel.Debug);
+                    var x = (int) npc.Position.X;
+                    var y = (int) npc.Position.Y;
+                    bool inRange = Utility.withinRadiusOfPlayer(x, y, 1, Game1.player);
+                    // this.Monitor.Log($"InRange: {inRange}, CharX: {x}, CharY: {y}", LogLevel.Debug);
+                    if (inRange)
+                    {
+                        dialogueTarget = npc;
+                        continue;
+                    }
+                }
+                if (dialogueTarget != null)
+                {
+                    this.CharacterName = dialogueTarget.Name;
+                    string greeting = dialogueTarget.getHi(Game1.player.Name);
+                    this.ConversationHistory.AppendLine($"{this.CharacterName}: {greeting}");
+                    this.showDialogueMenu(greeting);
+                }
             }
         }
 
