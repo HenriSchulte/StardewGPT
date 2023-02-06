@@ -82,10 +82,109 @@ namespace StardewGPT
 
         private string ConstructPrompt(string text)
         {
+            NPC npc = Game1.getCharacterFromName(this.CharacterName);
             string conversationHistory = this.ConversationHistory.ToString();
-            string prefix = $"A conversation between two characters in the video game Stardew Valley, the new farmer, {Game1.player.Name}, and {this.CharacterName}.";
-            string prompt = $"{prefix}\n{conversationHistory}\n{this.CharacterName}: ";
+            string prefix = $"A conversation between two characters in the video game Stardew Valley, the farmer, {Game1.player.Name}, and {this.CharacterName}.";
+            string time = $"The time is {this.GetTimeString()} on the {Game1.dayOfMonth} of {Game1.currentSeason}, {Game1.year} years after {Game1.player.Name} moved to the valley. The first day of a season is always a Monday.";
+            string relation = this.GetRelationshipString(npc);
+            string personality = this.GetPersonalityString(npc);
+            string prompt = $"{prefix} {personality} {relation} {time}\n{conversationHistory}\n{this.CharacterName}: ";
             return prompt;
+        }
+
+        private string GetTimeString()
+        {
+            int hours = Game1.timeOfDay / 100;
+            int min = Game1.timeOfDay % 100;
+            string minPrefix = min > 9 ? "" : "0";
+            return $"{hours}:{minPrefix}{min}";
+        }
+
+        private string GetRelationshipString(NPC npc)
+        {
+            Farmer farmer = Game1.player;
+            string relation = "";
+            if (farmer.spouse == npc.Name)
+            {
+                if (farmer.isMarried())
+                {
+                    relation = $"married for {farmer.GetDaysMarried()} days";
+                }
+                else if (farmer.isEngaged())
+                {
+                    relation = "engaged";
+                }
+            }
+            else if (npc.datingFarmer)
+            {
+                relation = "dating";
+            }
+            else if (npc.divorcedFromFarmer)
+            {
+                relation = "divorced";
+            }
+            else 
+            {
+                int heartLevel = farmer.getFriendshipHeartLevelForNPC(npc.Name);
+                if (heartLevel < 5)
+                {
+                    relation = "acquaintances";
+                }
+                else if (heartLevel < 10) {
+                    relation = "friends";
+                }
+                else {
+                    relation = "best friends";
+                }
+            }
+            return $"{npc.Name} and {farmer.Name} are {relation}.";
+        }
+
+        private string GetPersonalityString(NPC npc)
+        {
+            var adjectives = new List<string>();
+            switch (npc.Manners)
+            {
+                case 1:
+                    adjectives.Add("polite");
+                    break;
+                case 2:
+                    adjectives.Add("rude");
+                    break;
+            }
+            switch (npc.SocialAnxiety)
+            {
+                case 0:
+                    adjectives.Add("outgoing");
+                    break;
+                case 1:
+                    adjectives.Add("shy");
+                    break;
+            }
+            switch (npc.Optimism)
+            {
+                case 0:
+                    adjectives.Add("positive");
+                    break;
+                case 1:
+                    adjectives.Add("negative");
+                    break;
+            }
+            string age = "";
+            switch (npc.Age)
+            {
+                case 0:
+                    age = "adult";
+                    break;
+                case 1:
+                    age = "teen";
+                    break;
+                case 2:
+                    age = "child";
+                    break;
+            }
+            string joined = String.Join(", ", adjectives);
+            return $"{npc.Name} is a {joined} {age}.";
         }
 
         private void showDialogueMenu(string text)
