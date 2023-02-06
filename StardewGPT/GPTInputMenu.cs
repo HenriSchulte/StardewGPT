@@ -28,6 +28,8 @@ namespace StardewGPT
 
 		public ClickableTextureComponent exitButton;
 
+		public string inputPrefix = $"{Game1.player.Name}: ";
+
 		public GptInputMenu(submitBehavior callback)
 		{
 			this.onSubmit = callback;
@@ -35,13 +37,13 @@ namespace StardewGPT
 			this.y = Game1.uiViewport.Height / 2 + 92;
 			base.width = 1200;
 			base.height = 384;
-			this.textBox = new GptTextBox(null, null, Game1.dialogueFont, Game1.textColor);
+			this.textBox = new GptTextBox(null, null, Game1.dialogueFont, Game1.textColor, this.inputPrefix);
 			this.textBox.X = x;
 			this.textBox.Y = y;
 			this.textBox.Width = width;
 			this.textBox.Height = height;
 			this.textBox.OnEnterPressed += textBoxEnter;
-			this.textBox.Text = $"{Game1.player.Name}: ";
+			this.textBox.Text = this.inputPrefix;
 			this.textBox.SelectMe();
 			this.submitButton = new ClickableTextureComponent(new Rectangle(x + width - 64 - 4, y + height - 64 - 4, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f)
 			{
@@ -55,7 +57,12 @@ namespace StardewGPT
 
 		public void textBoxEnter(TextBox sender)
 		{
-			this.onSubmit(sender.Text);
+			string text = sender.Text.Trim();
+			if (text != this.inputPrefix.Trim())
+			{
+				// Text is not empty
+				this.onSubmit(text);
+			}
 		}
 
 		public void exitMenu()

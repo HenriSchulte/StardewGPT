@@ -10,9 +10,12 @@ namespace StardewGPT
 {
     public class GptTextBox : TextBox
     {
-        public GptTextBox(Texture2D textBoxTexture, Texture2D caretTexture, SpriteFont font, Color textColor)
+        public string textPrefix;
+
+        public GptTextBox(Texture2D textBoxTexture, Texture2D caretTexture, SpriteFont font, Color textColor, string prefix)
 		: base(textBoxTexture, caretTexture, font, textColor)
         {
+            this.textPrefix = prefix;
             base.limitWidth = false;
         }
 
@@ -39,9 +42,10 @@ namespace StardewGPT
 
         public override void RecieveCommandInput(char command)
         {
-            if (command == '\b' && base.Text.Length > 0)
+            if (command == '\b')
             {
-                base.Text = base.Text.Remove(base.Text.Length - 1);
+                if (base.Text.Length > this.textPrefix.Length)
+                    base.Text = base.Text.Remove(base.Text.Length - 1);
             }
             else
             {
