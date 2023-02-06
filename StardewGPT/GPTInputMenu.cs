@@ -26,6 +26,8 @@ namespace StardewGPT
 
 		public ClickableTextureComponent submitButton;
 
+		public ClickableTextureComponent exitButton;
+
 		public GptInputMenu(submitBehavior callback)
 		{
 			this.onSubmit = callback;
@@ -45,11 +47,20 @@ namespace StardewGPT
 			{
 				myID = 102
 			};
+			this.exitButton = new ClickableTextureComponent(new Rectangle(x + width - 64 - 4, y + height - 128 - 8, 64, 64), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47), 1f)
+			{
+				myID = 103
+			};
 		}
 
 		public void textBoxEnter(TextBox sender)
 		{
 			this.onSubmit(sender.Text);
+		}
+
+		public void exitMenu()
+		{
+			base.exitThisMenu();
 		}
 
 		public override void receiveKeyPress(Keys key)
@@ -65,6 +76,10 @@ namespace StardewGPT
 			{
 				this.textBoxEnter(this.textBox);
 				Game1.playSound("smallSelect");
+			}
+			else if (this.exitButton.containsPoint(x, y))
+			{
+				this.exitMenu();
 			}
 		}
 
@@ -82,6 +97,18 @@ namespace StardewGPT
 					this.submitButton.scale = Math.Max(1f, this.submitButton.scale - 0.05f);
 				}
 			}
+			if (this.exitButton != null)
+			{
+				if (this.exitButton.containsPoint(x, y))
+				{
+					this.exitButton.scale = Math.Min(1.1f, this.exitButton.scale + 0.05f);
+				}
+				else
+				{
+					this.exitButton.scale = Math.Max(1f, this.exitButton.scale - 0.05f);
+				}
+			}
+			
 		}
 
 		public override void draw(SpriteBatch b)
@@ -90,6 +117,7 @@ namespace StardewGPT
 			this.drawBox(b, this.x, this.y, this.width, this.height);
 			this.textBox.Draw(b);
 			this.submitButton.draw(b);
+			this.exitButton.draw(b);
 			base.drawMouse(b);
 		}
 
