@@ -15,9 +15,9 @@ namespace StardewGPT
 
         static string model = "text-davinci-003";
 
-        static int temperature = 0;
+        static double temperature = 0.7;
 
-        static int max_tokens = 128;
+        static int max_tokens = 64;
 
         public HttpClient client;
 
