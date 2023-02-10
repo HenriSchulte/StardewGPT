@@ -15,7 +15,7 @@ namespace StardewGPT
 
         static string model = "text-davinci-003";
 
-        static double temperature = 0.7;
+        static float temperature = 0.7f;
 
         static int max_tokens = 64;
 
