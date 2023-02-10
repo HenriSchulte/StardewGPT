@@ -85,7 +85,7 @@ namespace StardewGPT
             NPC npc = Game1.getCharacterFromName(this.CharacterName);
             string conversationHistory = this.ConversationHistory.ToString();
             string prefix = $"A conversation between two characters in the video game Stardew Valley, the farmer, {Game1.player.Name}, and {this.CharacterName}.";
-            string time = $"The time is {this.GetTimeString()} on the {Game1.dayOfMonth} of {Game1.currentSeason}, {Game1.year} years after {Game1.player.Name} moved to the valley. The first day of a season is always a Monday.";
+            string time = $"The time is {this.GetTimeString()} on {this.GetDateString()}.";
             string relation = this.GetRelationshipString(npc);
             string personality = this.GetPersonalityString(npc);
             string prompt = $"{prefix} {personality} {relation} {time}\n{conversationHistory}\n{this.CharacterName}: ";
@@ -98,6 +98,14 @@ namespace StardewGPT
             int min = Game1.timeOfDay % 100;
             string minPrefix = min > 9 ? "" : "0";
             return $"{hours}:{minPrefix}{min}";
+        }
+
+        private string GetDateString()
+        {
+            var weekdays = new List<string> { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+            int day = Game1.dayOfMonth;
+            string weekday = weekdays[(day - 1) % 7];
+            return $"{weekday}, the {day} of {Game1.currentSeason}, {Game1.year} years after {Game1.player.Name} moved to the valley";
         }
 
         private string GetRelationshipString(NPC npc)
