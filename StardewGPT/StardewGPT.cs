@@ -81,11 +81,11 @@ namespace StardewGPT
             NPC npc = Game1.getCharacterFromName(this.CharacterName);
             string convHistory = this.getConversationHistoryString();
             string prefix = $"A conversation between two characters in the video game Stardew Valley, the farmer, {Game1.player.Name}, and {this.CharacterName}.";
-            string emotions = $"Every message from {this.CharacterName} ends with an emotion token, e.g. $k. Neutral $k, happy $h, sad $s, love $l, or angry $a.";
+            string emotions = $"Every message from {this.CharacterName} ends with an emotion token, e.g. $k. Tokens are $k (neutral), $h (happy), $s (sad), $l (love), and $a (angry).";
             string time = $"The time is {this.GetTimeString()} on {this.GetDateString()}.";
             string relation = this.GetRelationshipString(npc);
             string personality = this.GetPersonalityString(npc);
-            string prompt = $"{prefix} {emotions} {personality} {relation} {time}\n{convHistory}\n{this.CharacterName}: ";
+            string prompt = $"{prefix} {personality} {relation} {time} {emotions}\nPrevious conversation:\n{convHistory}\n{this.CharacterName}: ";
             return prompt;
         }
 
