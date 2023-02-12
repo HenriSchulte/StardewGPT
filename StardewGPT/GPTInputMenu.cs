@@ -33,10 +33,10 @@ namespace StardewGPT
 		public GptInputMenu(submitBehavior callback)
 		{
 			this.onSubmit = callback;
-			this.x = Game1.uiViewport.Width / 2 - 600;
-			this.y = Game1.uiViewport.Height / 2 + 92;
 			base.width = 1200;
 			base.height = 384;
+			this.x = (int)Utility.getTopLeftPositionForCenteringOnScreen(base.width, base.height).X;
+			this.y = Game1.uiViewport.Height - base.height - 64;
 			this.textBox = new GptTextBox(null, null, Game1.dialogueFont, Game1.textColor, this.inputPrefix);
 			this.textBox.X = x;
 			this.textBox.Y = y;
