@@ -17,7 +17,7 @@ namespace StardewGPT
 
         public Dialogue Dialogue;
 
-        public StringBuilder ConversationHistory = new StringBuilder();
+        public List<string> ConversationHistory = new List<string>();
 
         public GptApi Api = new GptApi();
 
@@ -54,9 +54,10 @@ namespace StardewGPT
                 }
                 if (dialogueTarget != null)
                 {
+                    this.ConversationHistory.Clear();
                     this.CharacterName = dialogueTarget.Name;
                     string greeting = dialogueTarget.getHi(Game1.player.Name);
-                    this.ConversationHistory.AppendLine($"{this.CharacterName}: {greeting}");
+                    this.ConversationHistory.Add($"{this.CharacterName}: {greeting}");
                     this.showDialogueMenu(greeting);
                 }
             }
@@ -64,27 +65,27 @@ namespace StardewGPT
 
         private async Task onInputSubmit(string text)
         {
-            this.ConversationHistory.AppendLine(text);
+            this.ConversationHistory.Add(text);
             // Show empty dialogue box while fetching response
             this.showWaitingMenu();
             string prompt = this.ConstructPrompt(text);
             this.Monitor.Log(prompt, LogLevel.Debug);
             string response = await this.Api.GetCompletionAsync(prompt);
             this.Monitor.Log(response, LogLevel.Debug);
-            this.ConversationHistory.AppendLine($"{this.CharacterName}: {response}");
+            this.ConversationHistory.Add($"{this.CharacterName}: {response}");
             this.showDialogueMenu(response);
         }
 
         private string ConstructPrompt(string text)
         {
             NPC npc = Game1.getCharacterFromName(this.CharacterName);
-            string conversationHistory = this.ConversationHistory.ToString();
+            string convHistory = this.getConversationHistoryString();
             string prefix = $"A conversation between two characters in the video game Stardew Valley, the farmer, {Game1.player.Name}, and {this.CharacterName}.";
             string emotions = $"Every message from {this.CharacterName} ends with an emotion token, e.g. $k. Neutral $k, happy $h, sad $s, love $l, or angry $a.";
             string time = $"The time is {this.GetTimeString()} on {this.GetDateString()}.";
             string relation = this.GetRelationshipString(npc);
             string personality = this.GetPersonalityString(npc);
-            string prompt = $"{prefix} {emotions} {personality} {relation} {time}\n{conversationHistory}\n{this.CharacterName}: ";
+            string prompt = $"{prefix} {emotions} {personality} {relation} {time}\n{convHistory}\n{this.CharacterName}: ";
             return prompt;
         }
 
@@ -189,6 +190,16 @@ namespace StardewGPT
             }
             string joined = String.Join(", ", adjectives);
             return $"{npc.Name} is a {joined} {age}.";
+        }
+
+        private string getConversationHistoryString()
+        {
+            const int limit = 8;
+            int len = this.ConversationHistory.Count;
+            int lenToInclude = Math.Min(limit, len);
+            int startIndex = len - Math.Min(limit, len);
+            List<string> recentConvos = this.ConversationHistory.GetRange(startIndex, lenToInclude);
+            return string.Join("\n", recentConvos);
         }
 
         private void showDialogueMenu(string text)
