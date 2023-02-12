@@ -64,7 +64,6 @@ namespace StardewGPT
 
         private async Task onInputSubmit(string text)
         {
-            this.Monitor.Log(text, LogLevel.Debug);
             this.ConversationHistory.AppendLine(text);
             // Show empty dialogue box while fetching response
             this.showDialogueMenu("...");
