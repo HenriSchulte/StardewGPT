@@ -72,8 +72,29 @@ namespace StardewGPT
             this.Monitor.Log(prompt, LogLevel.Debug);
             string response = await this.Api.GetCompletionAsync(prompt);
             this.Monitor.Log(response, LogLevel.Debug);
+            string validResponse = this.ValidateResponse(response);
             this.ConversationHistory.Add($"{this.CharacterName}: {response}");
             this.showDialogueMenu(response);
+        }
+
+        private string ValidateResponse(string text)
+        {
+            String validEmotions = "khsla";
+            text = text.Trim();
+            int lastDollarIdx = text.LastIndexOf("$");
+            if (text.EndsWith("$"))
+            {
+                return text.Remove(lastDollarIdx);
+            }
+            else
+            {
+                string afterDollar = text.Substring(lastDollarIdx + 1, 1);
+                if (afterDollar != " " && !validEmotions.Contains(afterDollar))
+                {
+                    return text.Replace("$" + afterDollar, "$k");
+                }
+            }
+            return text;
         }
 
         private string ConstructPrompt(string text)
