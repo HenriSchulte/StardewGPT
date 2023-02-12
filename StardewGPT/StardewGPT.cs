@@ -66,7 +66,7 @@ namespace StardewGPT
         {
             this.ConversationHistory.AppendLine(text);
             // Show empty dialogue box while fetching response
-            this.showDialogueMenu("...");
+            this.showWaitingMenu();
             string prompt = this.ConstructPrompt(text);
             this.Monitor.Log(prompt, LogLevel.Debug);
             string response = await this.Api.GetCompletionAsync(prompt);
@@ -196,6 +196,11 @@ namespace StardewGPT
             this.Dialogue = new Dialogue(text, Game1.getCharacterFromName(this.CharacterName));
             this.Dialogue.onFinish = showInputMenu;
             Game1.activeClickableMenu = new DialogueBox(this.Dialogue);
+        }
+
+        private void showWaitingMenu()
+        {
+            Game1.activeClickableMenu = new GptWaitingMenu(Game1.getCharacterFromName(this.CharacterName));
         }
 
         private void showInputMenu()

@@ -61,6 +61,7 @@ namespace StardewGPT
 			if (text != this.inputPrefix.Trim())
 			{
 				// Text is not empty
+				this.textBox.Selected = false;
 				this.onSubmit(text);
 			}
 		}
