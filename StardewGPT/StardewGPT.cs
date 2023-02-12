@@ -56,6 +56,7 @@ namespace StardewGPT
                 {
                     this.ConversationHistory.Clear();
                     this.CharacterName = dialogueTarget.Name;
+                    dialogueTarget.faceTowardFarmerForPeriod(3000, 4, faceAway: false, Game1.player);
                     string greeting = dialogueTarget.getHi(Game1.player.Name);
                     this.ConversationHistory.Add($"{this.CharacterName}: {greeting}");
                     this.showDialogueMenu(greeting);
