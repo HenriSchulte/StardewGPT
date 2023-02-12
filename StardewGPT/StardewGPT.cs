@@ -71,7 +71,7 @@ namespace StardewGPT
             this.Monitor.Log(prompt, LogLevel.Debug);
             string response = await this.Api.GetCompletionAsync(prompt);
             this.Monitor.Log(response, LogLevel.Debug);
-            this.ConversationHistory.AppendLine(response);
+            this.ConversationHistory.AppendLine($"{this.CharacterName}: {response}");
             this.showDialogueMenu(response);
         }
 
