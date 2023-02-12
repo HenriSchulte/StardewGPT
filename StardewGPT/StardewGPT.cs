@@ -21,7 +21,7 @@ namespace StardewGPT
 
         public GptApi Api = new GptApi();
 
-        public string CharacterName = "Alex";
+        public string CharacterName;
 
         public override void Entry(IModHelper helper)
         {
