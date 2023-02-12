@@ -36,20 +36,16 @@ namespace StardewGPT
 
             if (Game1.activeClickableMenu != null || (!Context.IsPlayerFree)) return;
 
-            // print button presses to the console window
-            // this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
-
             // Display our UI if user presses middle mouse
             if (e.Button == SButton.MouseMiddle )
             {
                 NPC dialogueTarget = null;
                 foreach (NPC npc in Game1.currentLocation.characters)
                 {
-                    this.Monitor.Log(npc.Name, LogLevel.Debug);
+                    // Select first character that's in range - regardless of where player clicked
                     var x = (int) npc.Position.X;
                     var y = (int) npc.Position.Y;
                     bool inRange = Utility.withinRadiusOfPlayer(x, y, 1, Game1.player);
-                    // this.Monitor.Log($"InRange: {inRange}, CharX: {x}, CharY: {y}", LogLevel.Debug);
                     if (inRange)
                     {
                         dialogueTarget = npc;
