@@ -194,7 +194,8 @@ namespace StardewGPT
         private void showDialogueMenu(string text)
         {
             this.Dialogue = new Dialogue(text, Game1.getCharacterFromName(this.CharacterName));
-            Game1.activeClickableMenu = new GptDialogueBox(this.Dialogue, showInputMenu);
+            this.Dialogue.onFinish = showInputMenu;
+            Game1.activeClickableMenu = new DialogueBox(this.Dialogue);
         }
 
         private void showInputMenu()

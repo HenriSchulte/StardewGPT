@@ -17,7 +17,7 @@ namespace StardewGPT
 
         static float temperature = 0.7f;
 
-        static int max_tokens = 64;
+        static int max_tokens = 128;
 
         public HttpClient client;
 
