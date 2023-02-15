@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using StardewModdingAPI;
 
 namespace StardewGPT
 {
@@ -21,9 +22,12 @@ namespace StardewGPT
 
         public HttpClient client;
 
-        public GptApi()
+        public IMonitor Monitor;
+
+        public GptApi(IMonitor monitor)
         {
             this.client = new HttpClient();
+            this.Monitor = monitor;
 
             // setup authentication, read key from env
             string openaiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User);
@@ -33,8 +37,8 @@ namespace StardewGPT
         public async Task<string> GetCompletionAsync(string prompt)
         {
             var request = CreateRequestMessage(prompt);
-
             HttpResponseMessage response = await client.SendAsync(request);
+            this.Monitor.Log($"Received response with status code {response.StatusCode}", LogLevel.Debug);
             response.EnsureSuccessStatusCode();
             if (response.IsSuccessStatusCode)
             {

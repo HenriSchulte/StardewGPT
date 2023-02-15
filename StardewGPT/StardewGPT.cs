@@ -19,13 +19,15 @@ namespace StardewGPT
 
         public List<string> ConversationHistory = new List<string>();
 
-        public GptApi Api = new GptApi();
+        public GptApi Api;
 
         public string CharacterName;
 
         public override void Entry(IModHelper helper)
         {
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+
+            this.Api = new GptApi(this.Monitor);
         }
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
