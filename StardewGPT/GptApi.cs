@@ -12,8 +12,7 @@ namespace StardewGPT
 {
     public class GptApi
     {
-        static Uri Endpoint = new Uri("https://api.openai.com/v1/completions");
-
+        // If using Azure OpenAI, model is determined by deployment
         static string Model = "text-davinci-003";
 
         static float Temperature = 0.7f;
@@ -24,30 +23,75 @@ namespace StardewGPT
 
         public IMonitor Monitor;
 
+        public Uri Endpoint;
+
         public GptApi(IMonitor monitor)
         {
             this.Client = new HttpClient();
             this.Monitor = monitor;
 
-            // setup authentication, read key from env
+            this.Setup();
+        }
+
+        private void Setup()
+        {
+            bool isAzure = false;
+
+            // Read endpoint from environment, default to OpenAI API if not found
+            string endpoint = Environment.GetEnvironmentVariable("OPENAI_ENDPOINT", EnvironmentVariableTarget.User);
+            if (String.IsNullOrEmpty(endpoint))
+            {
+                this.Endpoint = new Uri("https://api.openai.com/v1/completions");
+            }
+            else
+            {
+                if (endpoint.Contains(".openai.azure.com"))
+                {
+                    isAzure = true;
+                    string deployment = Environment.GetEnvironmentVariable("OPENAI_DEPLOYMENT", EnvironmentVariableTarget.User);
+                    string version = Environment.GetEnvironmentVariable("OPENAI_API_VERSION", EnvironmentVariableTarget.User);
+                    this.Endpoint = new Uri($"{endpoint}/openai/deployments/{deployment}/completions?api-version={version}");
+                }
+                else
+                {
+                    this.Endpoint = new Uri(endpoint);
+                }
+            }
+
+            // Read Key from environment and attach to default authorization header
             string openaiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User);
-            this.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openaiKey);
+            if (isAzure)
+            {
+                this.Client.DefaultRequestHeaders.Add("api-key", openaiKey);
+            }
+            else
+            {
+                this.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openaiKey);
+            }
         }
 
         public async Task<string> GetCompletionAsync(string prompt)
         {
-            var request = CreateRequestMessage(prompt);
-            HttpResponseMessage response = await Client.SendAsync(request);
-            this.Monitor.Log($"Received response with status code {response.StatusCode}", LogLevel.Debug);
-            response.EnsureSuccessStatusCode();
-            if (response.IsSuccessStatusCode)
+            const int retries = 3;
+            string completion;
+            for (var i = 0; i < retries; i++)
             {
-                string responseContent = await response.Content.ReadAsStringAsync();
-                GptCompletionResponse responseObject = JsonSerializer.Deserialize<GptCompletionResponse>(responseContent);
-                return responseObject.choices[0].text;
+                var request = CreateRequestMessage(prompt);
+                this.Monitor.Log($"Making request to {this.Endpoint}", LogLevel.Debug);
+                HttpResponseMessage response = await Client.SendAsync(request);
+                this.Monitor.Log($"Received response with status code {response.StatusCode}", LogLevel.Debug);
+                response.EnsureSuccessStatusCode();
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    GptCompletionResponse responseObject = JsonSerializer.Deserialize<GptCompletionResponse>(responseContent);
+                    completion = responseObject.choices[0].text;
+                    if (!String.IsNullOrEmpty(completion))
+                        return completion;
+                }
             }
-            else
-                return response.ReasonPhrase;
+            return "Sorry, I can't talk right now.";
+
         }
 
         private HttpRequestMessage CreateRequestMessage(string prompt)
@@ -57,8 +101,7 @@ namespace StardewGPT
                 model = GptApi.Model,
                 prompt = prompt, 
                 temperature = GptApi.Temperature,
-                max_tokens = GptApi.MaxTokens,
-                stop = "\n"
+                max_tokens = GptApi.MaxTokens
             };
             
             string requestDataJson = JsonSerializer.Serialize(requestData);
@@ -66,7 +109,7 @@ namespace StardewGPT
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = GptApi.Endpoint,
+                RequestUri = this.Endpoint,
                 Content = new StringContent(requestDataJson, Encoding.UTF8, MediaTypeNames.Application.Json)
             };
 
