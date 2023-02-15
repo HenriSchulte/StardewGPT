@@ -74,8 +74,8 @@ namespace StardewGPT
             string response = await this.Api.GetCompletionAsync(prompt);
             this.Monitor.Log(response, LogLevel.Debug);
             string validResponse = this.ValidateResponse(response);
-            this.ConversationHistory.Add($"{this.CharacterName}: {response}");
-            this.showDialogueMenu(response);
+            this.ConversationHistory.Add($"{this.CharacterName}: {validResponse}");
+            this.showDialogueMenu(validResponse);
         }
 
         private string ValidateResponse(string text)
