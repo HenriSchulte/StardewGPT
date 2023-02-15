@@ -12,32 +12,32 @@ namespace StardewGPT
 {
     public class GptApi
     {
-        static Uri endpoint = new Uri("https://api.openai.com/v1/completions");
+        static Uri Endpoint = new Uri("https://api.openai.com/v1/completions");
 
-        static string model = "text-davinci-003";
+        static string Model = "text-davinci-003";
 
-        static float temperature = 0.7f;
+        static float Temperature = 0.7f;
 
-        static int max_tokens = 128;
+        static int MaxTokens = 128;
 
-        public HttpClient client;
+        public HttpClient Client;
 
         public IMonitor Monitor;
 
         public GptApi(IMonitor monitor)
         {
-            this.client = new HttpClient();
+            this.Client = new HttpClient();
             this.Monitor = monitor;
 
             // setup authentication, read key from env
             string openaiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY", EnvironmentVariableTarget.User);
-            this.client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openaiKey);
+            this.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openaiKey);
         }
 
         public async Task<string> GetCompletionAsync(string prompt)
         {
             var request = CreateRequestMessage(prompt);
-            HttpResponseMessage response = await client.SendAsync(request);
+            HttpResponseMessage response = await Client.SendAsync(request);
             this.Monitor.Log($"Received response with status code {response.StatusCode}", LogLevel.Debug);
             response.EnsureSuccessStatusCode();
             if (response.IsSuccessStatusCode)
@@ -54,10 +54,10 @@ namespace StardewGPT
         {
             var requestData = new GptCompletionRequestData
             {
-                model = GptApi.model,
+                model = GptApi.Model,
                 prompt = prompt, 
-                temperature = GptApi.temperature,
-                max_tokens = GptApi.max_tokens,
+                temperature = GptApi.Temperature,
+                max_tokens = GptApi.MaxTokens,
                 stop = "\n"
             };
             
@@ -66,7 +66,7 @@ namespace StardewGPT
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = GptApi.endpoint,
+                RequestUri = GptApi.Endpoint,
                 Content = new StringContent(requestDataJson, Encoding.UTF8, MediaTypeNames.Application.Json)
             };
 
