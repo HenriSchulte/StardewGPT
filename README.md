@@ -2,6 +2,9 @@
 
 StardewGPT enables immersive, AI-generated conversations with Stardew Valley NPCs. It requires access to the OpenAI API to work.
 
+## Disclaimer
+StardewGPT is primarily a proof of concept. It is not recommended for a regular playthrough.
+
 ## Prerequisites
 For general prerequisites for playing with Stardew Valley mods, see the [Player Guide](https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started) on the Stardew Valley Wiki.
 If you don't have an OpenAI account yet, you can create one [here](https://beta.openai.com/signup).
