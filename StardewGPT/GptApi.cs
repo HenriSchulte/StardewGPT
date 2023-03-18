@@ -14,7 +14,7 @@ namespace StardewGPT
     public class GptApi
     {
         // If using Azure OpenAI, model is determined by deployment
-        static string Model = "text-davinci-003";
+        static string Model = "gpt-3.5-turbo";
 
         static float Temperature = 0.7f;
 

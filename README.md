@@ -1,6 +1,6 @@
 # **Stardew** ![StardewGPT icon](.img/icon_48.png)
 
-StardewGPT enables immersive, AI-generated conversations with Stardew Valley NPCs. It requires access to the OpenAI API to work.
+StardewGPT enables immersive, AI-generated conversations with Stardew Valley NPCs. It uses GPT-3.5, the same engine powering ChatGPT, and therefore requires access to the OpenAI API to work.
 
 ## Disclaimer
 StardewGPT is primarily a proof of concept. It is not recommended for a regular playthrough.
