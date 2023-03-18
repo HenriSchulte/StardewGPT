@@ -57,8 +57,9 @@ namespace StardewGPT
 
 		public void textBoxEnter(TextBox sender)
 		{
-			string text = sender.Text.Trim();
-			if (text != this.inputPrefix.Trim())
+			// Remove prefix and trim whitespace
+			string text = sender.Text.Substring(inputPrefix.Length).Trim();
+			if (text != "")
 			{
 				// Text is not empty
 				this.textBox.Selected = false;

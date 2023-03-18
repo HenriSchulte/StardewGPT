@@ -18,7 +18,7 @@ namespace StardewGPT
 
         static float Temperature = 0.7f;
 
-        static int MaxTokens = 128;
+        static int MaxTokens = 300;
 
         public HttpClient Client;
 
@@ -102,7 +102,8 @@ namespace StardewGPT
                 model = GptApi.Model,
                 prompt = prompt, 
                 temperature = GptApi.Temperature,
-                max_tokens = GptApi.MaxTokens
+                max_tokens = GptApi.MaxTokens,
+                stop = ModEntry.EndMsgToken
             };
             
             string requestDataJson = JsonSerializer.Serialize(requestData);

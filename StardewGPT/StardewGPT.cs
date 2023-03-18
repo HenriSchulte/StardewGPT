@@ -14,6 +14,13 @@ namespace StardewGPT
 {
     internal sealed class ModEntry : Mod
     {
+        public static string SystemMsgToken = "<|im_start|>system";
+
+        public static string NpcMsgToken = "<|im_start|>assistant";
+
+        public static string PlayerMsgToken = "<|im_start|>user";
+
+        public static string EndMsgToken = "<|im_end|>";
 
         public Dialogue Dialogue;
 
@@ -60,7 +67,7 @@ namespace StardewGPT
                     this.CharacterName = dialogueTarget.Name;
                     dialogueTarget.faceTowardFarmerForPeriod(3000, 4, faceAway: false, Game1.player);
                     string greeting = dialogueTarget.getHi(Game1.player.Name);
-                    this.ConversationHistory.Add($"{this.CharacterName}: {greeting}");
+                    this.ConversationHistory.Add($"{NpcMsgToken}\n{greeting}\n{EndMsgToken}");
                     this.showDialogueMenu(greeting);
                 }
             }
@@ -68,7 +75,7 @@ namespace StardewGPT
 
         private async Task onInputSubmit(string text)
         {
-            this.ConversationHistory.Add(text);
+            this.ConversationHistory.Add($"{PlayerMsgToken}\n{text}\n{EndMsgToken}");
             // Show empty dialogue box while fetching response
             this.showWaitingMenu();
             string prompt = this.ConstructPrompt(text);
@@ -76,7 +83,7 @@ namespace StardewGPT
             string response = await this.Api.GetCompletionAsync(prompt);
             this.Monitor.Log(response, LogLevel.Debug);
             string validResponse = this.ValidateResponse(response);
-            this.ConversationHistory.Add($"{this.CharacterName}: {validResponse}");
+            this.ConversationHistory.Add($"{NpcMsgToken}\n{validResponse}\n{EndMsgToken}");
             this.showDialogueMenu(validResponse);
         }
 
@@ -104,12 +111,12 @@ namespace StardewGPT
         {
             NPC npc = Game1.getCharacterFromName(this.CharacterName);
             string convHistory = this.getConversationHistoryString();
-            string prefix = $"A conversation between two characters in the video game Stardew Valley, the farmer, {Game1.player.Name}, and {this.CharacterName}.";
+            string prefix = $"Assistant is {this.CharacterName} from Stardew Valley, who is speaking with the farmer, {Game1.player.Name}.";
             string emotions = $"Every message from {this.CharacterName} ends with an emotion token, e.g. $k. Tokens are $k (neutral), $h (happy), $s (sad), $l (love), and $a (angry).";
             string time = $"The time is {this.GetTimeString()} on {this.GetDateString()}.";
             string relation = this.GetRelationshipString(npc);
             string personality = this.GetPersonalityString(npc);
-            string prompt = $"{prefix} {personality} {relation} {time} {emotions}\nPrevious conversation:\n{convHistory}\n{this.CharacterName}: ";
+            string prompt = $"{SystemMsgToken}\n{prefix} {personality} {relation} {time} {emotions}\n{EndMsgToken}\n{convHistory}\n{NpcMsgToken}";
             return prompt;
         }
 
