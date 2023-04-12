@@ -14,7 +14,7 @@ If you don't have an OpenAI account yet, you can create one [here](https://beta.
 1. Download the file titled StardewGPT.zip.
 1. Follow the [instructions in the player guide](https://stardewvalleywiki.com/Modding:Player_Guide/Getting_Started#Install_mods) to install the mod.
 1. Find your OpenAI key on your [API keys page](https://platform.openai.com/account/api-keys).
-1. Set the user environment variable on your operating system `OPENAI_API_KEY` to your key. [Here's how to do that on Windows](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/set_1).
+1. Set your operating system's user environment variable `OPENAI_API_KEY` to your key. [Here's how to do that on Windows](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/set_1).
 1. Start the game with SMAPI and middle-click on a character to initiate an AI-generated conversation.
 
 ![Screenshot of an AI-generated conversation with Mayor Lewis](.img/lewis.jpg)
