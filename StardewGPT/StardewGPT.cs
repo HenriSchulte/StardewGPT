@@ -14,17 +14,9 @@ namespace StardewGPT
 {
     internal sealed class ModEntry : Mod
     {
-        public static string SystemMsgToken = "<|im_start|>system";
-
-        public static string NpcMsgToken = "<|im_start|>assistant";
-
-        public static string PlayerMsgToken = "<|im_start|>user";
-
-        public static string EndMsgToken = "<|im_end|>";
-
         public Dialogue Dialogue;
 
-        public List<string> ConversationHistory = new List<string>();
+        public List<GptMessage> ConversationHistory = new List<GptMessage>();
 
         public GptApi Api;
 
@@ -67,7 +59,7 @@ namespace StardewGPT
                     this.CharacterName = dialogueTarget.Name;
                     dialogueTarget.faceTowardFarmerForPeriod(3000, 4, faceAway: false, Game1.player);
                     string greeting = dialogueTarget.getHi(Game1.player.Name);
-                    this.ConversationHistory.Add($"{NpcMsgToken}\n{greeting}\n{EndMsgToken}");
+                    this.AddMessageToHistory(greeting, false);
                     this.showDialogueMenu(greeting);
                 }
             }
@@ -75,16 +67,33 @@ namespace StardewGPT
 
         private async Task onInputSubmit(string text)
         {
-            this.ConversationHistory.Add($"{PlayerMsgToken}\n{text}\n{EndMsgToken}");
+            this.AddMessageToHistory(text, true);
             // Show empty dialogue box while fetching response
             this.showWaitingMenu();
-            string prompt = this.ConstructPrompt(text);
-            this.Monitor.Log(prompt, LogLevel.Debug);
-            string response = await this.Api.GetCompletionAsync(prompt);
-            this.Monitor.Log(response, LogLevel.Debug);
+            string response = await this.MakeApiRequest();
             string validResponse = this.ValidateResponse(response);
-            this.ConversationHistory.Add($"{NpcMsgToken}\n{validResponse}\n{EndMsgToken}");
+            this.AddMessageToHistory(validResponse, false);
             this.showDialogueMenu(validResponse);
+        }
+
+        private async Task<string> MakeApiRequest()
+        {
+            GptMessage systemMsg = this.ConstructSystemMessage();
+            List<GptMessage> conversationHistory = this.getConversationHistory();
+            List<GptMessage> messages = new List<GptMessage>();
+            messages.Add(systemMsg);
+            messages.AddRange(conversationHistory);
+            this.Monitor.Log(string.Join("\n", messages) , LogLevel.Debug);
+            string response = await this.Api.GetCompletionAsync(messages);
+            return response;
+        }
+
+        private void AddMessageToHistory(string content, bool isPlayer)
+        {
+            string role = isPlayer ? "user" : "assistant";
+            string name = isPlayer ? Game1.player.Name : this.CharacterName;
+            GptMessage msg = new GptMessage(role, content, name);
+            this.ConversationHistory.Add(msg);
         }
 
         private string ValidateResponse(string text)
@@ -107,17 +116,16 @@ namespace StardewGPT
             return text;
         }
 
-        private string ConstructPrompt(string text)
+        private GptMessage ConstructSystemMessage()
         {
             NPC npc = Game1.getCharacterFromName(this.CharacterName);
-            string convHistory = this.getConversationHistoryString();
-            string prefix = $"Assistant is {this.CharacterName} from Stardew Valley, who is speaking with the farmer, {Game1.player.Name}.";
-            string emotions = $"Every message from {this.CharacterName} ends with an emotion token, e.g. $k. Tokens are $k (neutral), $h (happy), $s (sad), $l (love), and $a (angry).";
+            string prefix = $"You are {this.CharacterName} from Stardew Valley, who is speaking with the farmer, {Game1.player.Name}. You must respond as {this.CharacterName} at all times!";
+            string emotions = $"Every message from you ends with an emotion token, e.g. $k. Tokens are $k (neutral), $h (happy), $s (sad), $l (love), and $a (angry).";
             string time = $"The time is {this.GetTimeString()} on {this.GetDateString()}.";
             string relation = this.GetRelationshipString(npc);
             string personality = this.GetPersonalityString(npc);
-            string prompt = $"{SystemMsgToken}\n{prefix} {personality} {relation} {time} {emotions}\n{EndMsgToken}\n{convHistory}\n{NpcMsgToken}";
-            return prompt;
+            GptMessage msg = new GptMessage(role: "system", content: $"{prefix} {personality} {relation} {time} {emotions}");
+            return msg;
         }
 
         private string GetTimeString()
@@ -223,14 +231,14 @@ namespace StardewGPT
             return $"{npc.Name} is a {joined} {age}.";
         }
 
-        private string getConversationHistoryString()
+        private List<GptMessage> getConversationHistory()
         {
             const int limit = 8;
             int len = this.ConversationHistory.Count;
             int lenToInclude = Math.Min(limit, len);
             int startIndex = len - Math.Min(limit, len);
-            List<string> recentConvos = this.ConversationHistory.GetRange(startIndex, lenToInclude);
-            return string.Join("\n", recentConvos);
+            List<GptMessage> recentConvos = this.ConversationHistory.GetRange(startIndex, lenToInclude);
+            return recentConvos;
         }
 
         private void showDialogueMenu(string text)
